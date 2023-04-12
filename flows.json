@@ -1,0 +1,1483 @@
+[
+    {
+        "id": "93bb1b11.b35458",
+        "type": "tab",
+        "label": "Chladenie",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "5c39c496.12ac04",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Chladenie voda",
+        "func": "// zistenie rozdielu teploty vody v studni\n// toto musis kontrolovat s oneskorenim, nakolko pri starte je dT =0\n//var delta = (global.get('StudnaP')-global.get('StudnaS'))\n\n//if (delta >= '1' ){\n//    global.set('Stop', 0);\n//    }\n// else global.set('Stop', 1);\n// \n// msg.payload = global.get('Stop') ; \n\n\n\n\nif (( global.get('Priestor') > 26 ) && ( global.get('Vonku') > 28 )) {\n    // a aky je cas ? V zimnom obdobi nechladiť !!!!\n    // je v budove teplo ?\n    // beží už chladenie ?\n    // po 2 hod. daj pauzu 20min.\n    // ak je velmi teplo a nevladze stroj vypni\n    // teda ake su rozdiely v privod-spiatocka\n    // zapni chladenie  \n    global.set('Stop', 0);\n    msg.payload = true ;}\n    \nelse {\n      msg.payload =  false ;\n      // vypni chladenie\n     }\n\n//docasne trvale chladit\n//global.set('Stop', 0);\n//msg.payload = true ;\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 300,
+        "y": 160,
+        "wires": [
+            [
+                "cc37d1d.bea18b",
+                "5635d9a0.d677"
+            ]
+        ]
+    },
+    {
+        "id": "952b43de.12f6",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffTH ON",
+        "func": "msg.payload=1;\nmsg.topic=\"cmnd/sonoffTH/POWER\"\nreturn msg;\n\n//pôvodne\n/*\nmsg.payload=\"1\";\nmsg.topic=\"test/switch/sonoth/relay/0/set\"\nreturn msg;\n*/",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1270,
+        "y": 400,
+        "wires": [
+            [
+                "608dfb47.992974"
+            ]
+        ]
+    },
+    {
+        "id": "2295e46.cc95f9c",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoTH_ Zapni",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonoth/relay/0/set",
+        "payload": "",
+        "payloadType": "date",
+        "x": 880,
+        "y": 360,
+        "wires": [
+            [
+                "952b43de.12f6"
+            ]
+        ]
+    },
+    {
+        "id": "7da1e9ae.9d019",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffTH OFF",
+        "func": "msg.payload=0;\nmsg.topic=\"cmnd/sonoffTH/POWER\"\nreturn msg;\n\n// pôvodne\n/*\nmsg.payload=\"0\";\nmsg.topic=\"test/switch/sonoth/relay/0/set\"\nreturn msg;\n*/",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1280,
+        "y": 460,
+        "wires": [
+            [
+                "608dfb47.992974"
+            ]
+        ]
+    },
+    {
+        "id": "563843ec.fdda8c",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoTH_Vypni",
+        "repeat": "",
+        "crontab": "*/1 18-23 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonoth/relay/0/set",
+        "payload": "",
+        "payloadType": "date",
+        "x": 880,
+        "y": 460,
+        "wires": [
+            [
+                "7da1e9ae.9d019",
+                "c0b6f956.9627e"
+            ]
+        ]
+    },
+    {
+        "id": "cf613c67.3c561",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "sonodua ON",
+        "func": "msg.payload=\"1\";\n//sonoffsc1 zasuvka stromcek\n//msg.topic=\"cmnd/sonoffsc1_9E4F83/POWER\"\n//msg.topic=\"test/switch/sonodua/relay/0\"\nmsg.topic=\"cmnd/sonoffdual/POWER1\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1030,
+        "y": 120,
+        "wires": [
+            [
+                "608dfb47.992974",
+                "1a4fafd8.869c1"
+            ]
+        ]
+    },
+    {
+        "id": "608dfb47.992974",
+        "type": "mqtt out",
+        "z": "93bb1b11.b35458",
+        "name": "MQTT_local",
+        "topic": "",
+        "qos": "1",
+        "retain": "",
+        "broker": "38a53c38.fdd9a4",
+        "x": 1750,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "5ab57304.0e6e54",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoDual_ Zapni_Obe",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonodua/relay/0",
+        "payload": "",
+        "payloadType": "date",
+        "x": 740,
+        "y": 40,
+        "wires": [
+            [
+                "cf613c67.3c561"
+            ]
+        ]
+    },
+    {
+        "id": "1d100cef.05f9cb",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "sonodua OFF",
+        "func": "msg.payload=\"0\";\n\n//sonoffsc zasuvka stromcek\n//msg.topic=\"cmnd/sonoffsc1_9E4F83/POWER\"\n//msg.topic=\"test/switch/sonodua/relay/0\"\nmsg.topic=\"cmnd/sonoffdual/POWER1\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1040,
+        "y": 180,
+        "wires": [
+            [
+                "608dfb47.992974",
+                "34aeaa10.3d31b6"
+            ]
+        ]
+    },
+    {
+        "id": "3d71e35e.00e3dc",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoDual_Vypni_obe",
+        "repeat": "",
+        "crontab": "*/5 21-23 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonodua/relay/0",
+        "payload": "",
+        "payloadType": "date",
+        "x": 800,
+        "y": 240,
+        "wires": [
+            [
+                "1d100cef.05f9cb"
+            ]
+        ]
+    },
+    {
+        "id": "a8106873.2f9388",
+        "type": "comment",
+        "z": "93bb1b11.b35458",
+        "name": "ovladenie konvektora",
+        "info": "",
+        "x": 360,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "7a7b992a.cb2af",
+        "type": "comment",
+        "z": "93bb1b11.b35458",
+        "name": "chladenie studňou",
+        "info": "// takto snimam teploty v Datalog\n\n\n\n  var err = 85;\n//msg.timestamp = new Date() ;\nvar teplota = msg.payload;\nvar msg1 = { payload: msg.payload.length };\n\nif (msg.payload != err){\n    if (msg.topic == \"28.99E9A0010000/temperature\")\n    { \n    msg1.payload  =  [{ measurement: \"home\",\n        fields: { value: teplota},\n        tags: { location: \"privod\"}\n        }\n        ];\n    }\n    \n    else if (msg.topic == \"10.10F30C020800/temperature\"){ \n        msg1.payload = [{ measurement: \"home\",\n        fields: { value: teplota},\n        tags: {location:\"vonku\"}\n        }\n        ];\n    }\n    \n    else if (msg.topic == \"10.9BEC0C020800/temperature\"){ \n        msg1.payload = [{measurement: \"home\",\n        fields: { value: teplota},\n        tags: { location:\"priestor\"}\n        }\n        ];\n        var temp = parseFloat ( teplota);\n        global.set(\"Priestor\", temp);\n    }\n    \n    else if (msg.topic == \"28.2002B7020000/temperature\"){ \n        msg1.payload = [{ measurement: \"home\",\n        fields: { value: teplota},\n        tags:{ location:\"spiatocka\"}\n        }\n        ];\n    }\n   \n    else if (msg.topic == \"28.04D2DA020000/temperature\"){ \n        msg1.payload = [{ measurement: \"home\",\n        fields: { value: teplota},\n        tags:{ location:\"cidlo_2804D2\"}\n        }\n        ];\n    }\n    \n    else if (msg.topic == \"28.34F8A0010000/temperature\"){ \n        msg1.payload = [{ measurement: \"home\",\n        fields: { value: teplota},\n        tags:{ location:\"cidlo2834F8\"}\n        }\n        ];\n    }\n    \n    else if (msg.topic == \"28.9A3302020000/temperature\"){ \n        msg1.payload = [{ measurement: \"home\",\n        fields: { value: teplota},\n        tags:{ location:\"cidlo289A33\"}\n        }\n        ];\n    }\n    \n    else if (msg.topic == \"28.055C02020000/temperature\"){ \n        msg1.payload = [{ measurement: \"home\",\n        fields: { value: teplota},\n        tags:{ location:\"cidlo28055C\"}\n        }\n        ];\n    }\n    \n    else if (msg.topic == \"28.4D01A1010000/temperature\"){ \n        msg1.payload = [{ measurement: \"home\",\n        fields: { value: teplota},\n        tags:{ location:\"cidlo284D01\"}\n        }\n        ];\n    }\n    \n    else  return null;\n}\n\nelse  return null;\n\n//return [msg];\n//msg.timestamp = new Date() ;\nreturn msg1;\n\n\n\n\n//10.10F30C020800/temperature\n//10.9BEC0C020800/temperature\n//28.2002B7020000/temperature\n//28.04D2DA020000/temperature\n//28.34F8A0010000/temperature\n//28.9A3302020000/temperature\n//28.99E9A0010000/temperature\n//28.055C02020000/temperature\n//28.4D01A1010000/temperature",
+        "x": 90,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "cc37d1d.bea18b",
+        "type": "switch",
+        "z": "93bb1b11.b35458",
+        "name": "chladit ?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 500,
+        "y": 160,
+        "wires": [
+            [
+                "cf613c67.3c561"
+            ],
+            [
+                "1d100cef.05f9cb"
+            ]
+        ],
+        "outputLabels": [
+            "zapni",
+            "vypni"
+        ]
+    },
+    {
+        "id": "6cc87eca.c285",
+        "type": "comment",
+        "z": "93bb1b11.b35458",
+        "name": "ANO",
+        "info": "",
+        "x": 610,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "96b78580.0157b",
+        "type": "comment",
+        "z": "93bb1b11.b35458",
+        "name": "NIE",
+        "info": "",
+        "x": 610,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "8434c9e7.baf1e8",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Doplnkove chladenie alebo kurenie",
+        "func": "var delta = global.get('Priestor' ) - global.get('Konvektor_1');\nif (( global.get('Priestor') > 25 ) && ( global.get('Vonku') > 25 ) && delta >= 1.5) {\n    msg.payload = true ;\n    // zapni aj dolpnkove chladenie\n    }\n    else if (( global.get('Zimna') < 23 ) && ( global.get('Vonku') < 15 ) && ( global.get('Konvektor_1') > 25 )) {\n        // zapni ventilator ak je teplota v zimnej nižśia ako 26 °C inak nekúr.\n        msg.payload = false ;\n        if ( global.get('Zimna') < 26 ) {\n            msg.payload = true \n            \n        } \n    }\n    else  msg.payload = false ;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 360,
+        "y": 340,
+        "wires": [
+            [
+                "2c287a25.50d206"
+            ]
+        ]
+    },
+    {
+        "id": "2c287a25.50d206",
+        "type": "switch",
+        "z": "93bb1b11.b35458",
+        "name": "ventilator ?",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 730,
+        "y": 400,
+        "wires": [
+            [
+                "952b43de.12f6"
+            ],
+            [
+                "7da1e9ae.9d019"
+            ]
+        ],
+        "outputLabels": [
+            "zapni",
+            "vypni"
+        ]
+    },
+    {
+        "id": "aacf5d7f.491578",
+        "type": "comment",
+        "z": "93bb1b11.b35458",
+        "name": "NIE",
+        "info": "",
+        "x": 690,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "8dbfd31b.7cd3c",
+        "type": "comment",
+        "z": "93bb1b11.b35458",
+        "name": "ANO",
+        "info": "",
+        "x": 690,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "34aeaa10.3d31b6",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "STOP",
+        "func": "global.set('Stop', 1);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1190,
+        "y": 240,
+        "wires": [
+            [
+                "2c649b6e.59b09c"
+            ]
+        ]
+    },
+    {
+        "id": "1a4fafd8.869c1",
+        "type": "delay",
+        "z": "93bb1b11.b35458",
+        "name": "30sec.",
+        "pauseType": "delay",
+        "timeout": "30",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "outputs": 1,
+        "x": 1170,
+        "y": 80,
+        "wires": [
+            [
+                "ba6cb645.c3b92"
+            ]
+        ]
+    },
+    {
+        "id": "ba6cb645.c3b92",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Sonodua_ 2 rele",
+        "func": "msg.payload=\"1\";\nmsg.topic=\"cmnd/sonoffdual/POWER2\"\n//msg.topic=\"test/switch/sonodua/relay/1\"\n//sonoffsc zasuvka stromcek\n//msg.topic=\"cmnd/sonoffSC/POWER\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1320,
+        "y": 80,
+        "wires": [
+            [
+                "608dfb47.992974"
+            ]
+        ]
+    },
+    {
+        "id": "2c649b6e.59b09c",
+        "type": "delay",
+        "z": "93bb1b11.b35458",
+        "name": "30sec.",
+        "pauseType": "delay",
+        "timeout": "30",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "outputs": 1,
+        "x": 1310,
+        "y": 240,
+        "wires": [
+            [
+                "535e9328.9f9434"
+            ]
+        ]
+    },
+    {
+        "id": "535e9328.9f9434",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Sonodua/1",
+        "func": "msg.payload=\"0\";\nmsg.topic=\"cmnd/sonoffdual/POWER2\"\n//msg.topic=\"test/switch/sonodua/relay/1\"\n// sonoffsc zasuvka stromcek\n//msg.topic=\"cmnd/sonoffSC/POWER\";\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1450,
+        "y": 240,
+        "wires": [
+            [
+                "608dfb47.992974"
+            ]
+        ]
+    },
+    {
+        "id": "c0b6f956.9627e",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "STOP",
+        "func": "global.set('Stop', 1);\nmsg.reset = true ;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1250,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d84c34fd.7d33a8",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Create query mqtt",
+        "func": "msg.payload=\"1\";\nmsg.topic=\"cmnd/sonoffdual/POWER1\"\n//msg.topic=\"test/switch/sonodua/relay/0\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 450,
+        "y": 1260,
+        "wires": [
+            [
+                "3aeab05f.0ae808"
+            ]
+        ]
+    },
+    {
+        "id": "3aeab05f.0ae808",
+        "type": "mqtt out",
+        "z": "93bb1b11.b35458",
+        "name": "MQTT Server",
+        "topic": "",
+        "qos": "1",
+        "retain": "",
+        "broker": "38a53c38.fdd9a4",
+        "x": 680,
+        "y": 1360,
+        "wires": []
+    },
+    {
+        "id": "e4492370.733c1",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoDual_ Zapni_RELE0",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 1260,
+        "wires": [
+            [
+                "d84c34fd.7d33a8"
+            ]
+        ]
+    },
+    {
+        "id": "d7e41aab.3c1738",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Create query mqtt",
+        "func": "msg.payload=\"0\";\nmsg.topic=\"cmnd/sonoffdual/POWER1\"\n//msg.topic=\"test/switch/sonodua/relay/0\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 450,
+        "y": 1320,
+        "wires": [
+            [
+                "3aeab05f.0ae808"
+            ]
+        ]
+    },
+    {
+        "id": "ac5128a3.3eb8c8",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoDual_Vypni_RELE0",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 1320,
+        "wires": [
+            [
+                "d7e41aab.3c1738"
+            ]
+        ]
+    },
+    {
+        "id": "6d899bfc.2c7fe4",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Create query mqtt",
+        "func": "msg.payload=\"1\";\nmsg.topic=\"cmnd/sonoffdual/POWER2\"\n//msg.topic=\"test/switch/sonodua/relay/1\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 446,
+        "y": 1380,
+        "wires": [
+            [
+                "3aeab05f.0ae808"
+            ]
+        ]
+    },
+    {
+        "id": "55e1ff95.a13df",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoDual_ Zapni_RELE1",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 1380,
+        "wires": [
+            [
+                "6d899bfc.2c7fe4"
+            ]
+        ]
+    },
+    {
+        "id": "ea79b3ad.aebba",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Create query mqtt",
+        "func": "msg.payload=\"0\";\nmsg.topic=\"cmnd/sonoffdual/POWER2\"\n//msg.topic=\"test/switch/sonodua/relay/1\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 450,
+        "y": 1440,
+        "wires": [
+            [
+                "3aeab05f.0ae808"
+            ]
+        ]
+    },
+    {
+        "id": "4a06071d.32d308",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoDual_Vypni_RELE1",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 210,
+        "y": 1440,
+        "wires": [
+            [
+                "ea79b3ad.aebba"
+            ]
+        ]
+    },
+    {
+        "id": "77224943.fa89e8",
+        "type": "comment",
+        "z": "93bb1b11.b35458",
+        "name": "Rucne zapnut - test",
+        "info": "",
+        "x": 130,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "1a09d257.b9c87e",
+        "type": "xml",
+        "z": "93bb1b11.b35458",
+        "name": "XML read",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 380,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a2c5bfd2.ba5dc",
+        "type": "http request",
+        "z": "93bb1b11.b35458",
+        "name": "teploty_studna",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": false,
+        "url": "192.168.1.44/info",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "x": 220,
+        "y": 60,
+        "wires": [
+            [
+                "1a09d257.b9c87e"
+            ]
+        ]
+    },
+    {
+        "id": "422fae8e.575bc8",
+        "type": "change",
+        "z": "93bb1b11.b35458",
+        "name": "výstup status nie msg",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "status.text",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 620,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dc54f75e.6f3618",
+        "type": "change",
+        "z": "93bb1b11.b35458",
+        "name": "Chladenie je  ...",
+        "rules": [
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "true",
+                "fromt": "bool",
+                "to": "Ventilátor  je  zapnutý",
+                "tot": "str"
+            },
+            {
+                "t": "change",
+                "p": "payload",
+                "pt": "msg",
+                "from": "false",
+                "fromt": "bool",
+                "to": "Ventilátor  je  vypnutý",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 500,
+        "wires": [
+            [
+                "422fae8e.575bc8"
+            ]
+        ]
+    },
+    {
+        "id": "afc25924.bbfa1",
+        "type": "ui_template",
+        "z": "93bb1b11.b35458",
+        "group": "388d2e1a.fa6fb2",
+        "name": "Konvektor",
+        "order": 9,
+        "width": 5,
+        "height": 2,
+        "format": " \n<md-button class=\"vibrate filled touched bigfont rounded\" style=\"background-color:#333333\" ng-init=\"(msg.payload=global.get('Stop'))\" ng-click=\"send({payload: msg.payload })\"> \n\n<svg  width=\"100%\" height=\"100%\" version=\"1.1\" viewBox=\"0 0 800 200\">\n <g id=\"Button_Long\">\n  \n  <rect fill=\"#333333\" width=\"800\" height=\"200\"/>\n  <g ng-style=\"{fill: (msg.payload || 0) ? 'lime' : 'red'}\">\n    <rect width=\"800\" height=\"200\" rx=\"80\" ry=\"80\"/>\n  </g>\n  \n  <rect fill=\"#333333\" x=\"11\" y=\"10\" width=\"778\" height=\"180\" rx=\"90\" ry=\"90\"/>\n  <g ng-style=\"{fill: (msg.payload || 0) ? 'lime' : 'red'}\">\n      \n    <text x=\"400\" y=\"125\" style=\"text-anchor:middle\"  font-weight=\"bold\" font-size=\"80\" font-family=\"Arial\">{{(msg.payload||0)? \"Konvektor zapni\" : \"Konvektor vypni\"}} </text>\n    </g>\n  </g>\n</svg>\n\n\n\n</md-button>\n",
+        "storeOutMessages": false,
+        "fwdInMessages": false,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "x": 180,
+        "y": 500,
+        "wires": [
+            [
+                "dc54f75e.6f3618",
+                "acbf63.6d4048a"
+            ]
+        ]
+    },
+    {
+        "id": "acbf63.6d4048a",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "invert",
+        "func": "msg.payload = !msg.payload;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 190,
+        "y": 440,
+        "wires": [
+            [
+                "afc25924.bbfa1"
+            ]
+        ]
+    },
+    {
+        "id": "cd00c29b.792ea8",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "sonoth ON",
+        "func": "msg.payload=1;\nmsg.topic=\"cmnd/sonoffTH/POWER\"\nreturn msg;\n\n//stat/sonoffTH/RESULT = {\"POWER\":\"OFF\"}\n//stat/sonoffTH/POWER = OFF\n\n\n\n// pôvodne :\n/*\nmsg.payload=\"1\";\nmsg.topic=\"test/switch/sonoth/relay/0/set\"\nreturn msg;\n*/\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 1500,
+        "wires": [
+            [
+                "3aeab05f.0ae808"
+            ]
+        ]
+    },
+    {
+        "id": "4dfa5224.f4a2cc",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoTH_ Zapni",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonoth/relay/0/set",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 1500,
+        "wires": [
+            [
+                "cd00c29b.792ea8"
+            ]
+        ]
+    },
+    {
+        "id": "d21cf873.5654f8",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "sonoth OFF",
+        "func": "msg.payload=0;\nmsg.topic=\"cmnd/sonoffTH/POWER\"\nreturn msg;\n\n\n\n// pôvodne\n/*\nmsg.payload=\"0\";\nmsg.topic=\"test/switch/sonoth/relay/0/set\"\nreturn msg;\n*/",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 1540,
+        "wires": [
+            [
+                "3aeab05f.0ae808"
+            ]
+        ]
+    },
+    {
+        "id": "95b9e7f4.5671d",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoTH_Vypni",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonoth/relay/0/set",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 1540,
+        "wires": [
+            [
+                "d21cf873.5654f8"
+            ]
+        ]
+    },
+    {
+        "id": "319882a3.9578f6",
+        "type": "mqtt in",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffTH_status  ",
+        "topic": "stat/sonoffTH/STATUS8/#",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "38a53c38.fdd9a4",
+        "inputs": 0,
+        "x": 120,
+        "y": 700,
+        "wires": [
+            [
+                "8127f079.ff38e"
+            ]
+        ]
+    },
+    {
+        "id": "763e3a41.98c424",
+        "type": "mqtt in",
+        "z": "93bb1b11.b35458",
+        "name": "SonoffTH:T1,T2",
+        "topic": "tele/sonoffTH/SENSOR/#",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "38a53c38.fdd9a4",
+        "inputs": 0,
+        "x": 120,
+        "y": 740,
+        "wires": [
+            [
+                "8127f079.ff38e"
+            ]
+        ]
+    },
+    {
+        "id": "8127f079.ff38e",
+        "type": "json",
+        "z": "93bb1b11.b35458",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 330,
+        "y": 720,
+        "wires": [
+            [
+                "10f9cb75.31275d"
+            ]
+        ]
+    },
+    {
+        "id": "10f9cb75.31275d",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Precitaj teplotu",
+        "func": "//Precitaj teplotu konvektora\nvar err = '85'\n//    tele/sonoffTH/SENSOR   payload[\"DS18B20-1\"].Temperature\nif ( msg.topic == \"tele/sonoffTH/SENSOR\" ) {\n    if (msg.payload[\"DS18B20-1\"].Temperature != err){\n     global.set('Konvektor_1', msg.payload[\"DS18B20-1\"].Temperature);\n      msg.topic = \"Teplota/stat_1\";\n    }\n    if (msg.payload[\"DS18B20-2\"].Temperature != err){\n     global.set('Konvektor_2', msg.payload[\"DS18B20-2\"].Temperature);\n      msg.topic = \"Teplota/stat_2\";\n    }\n}\n\n//    stat/sonoffTH/STATUS8    payload.StatusSNS[\"DS18B20-1\"].Temperature\n\nelse if ( msg.topic == \"stat/sonoffTH/STATUS8\" ) {\n    if (msg.payload.StatusSNS[\"DS18B20-1\"].Temperature != err){\n     global.set('Konvektor_1', msg.payload.StatusSNS[\"DS18B20-1\"].Temperature);\n      msg.topic = \"Teplota/stat_1\";\n        \n    }\n    if (msg.payload.StatusSNS[\"DS18B20-2\"].Temperature != err){\n     global.set('Konvektor_2', msg.payload.StatusSNS[\"DS18B20-2\"].Temperature);\n      msg.topic = \"Teplota/stat_2\";\n        \n    }\n}    \n\nelse if ( msg.topic == \"tele/sonoffDallas/SENSOR\" ) {\n    if (msg.payload[\"DS18B20\"].Temperature != err){\n     global.set('Zimna_stena', msg.payload[\"DS18B20\"].Temperature);\n      msg.topic = \"Zimna_stena\";\n    }\n    \n}\n//tele/sonoffdual/SENSOR = {\"Time\":\"2022-12-24T22:58:14\",\"DS18B20\":{\"Id\":\"0213167D38AA\",\"Temperature\":19.9},\"TempUnit\":\"C\"}\n\nelse if ( msg.topic == \"tele/sonoffDallas/SENSOR\" ) {\n    if (msg.payload[\"DS18B20\"].Temperature != err){\n     global.set('Zimna_stena', msg.payload[\"DS18B20\"].Temperature);\n      msg.topic = \"Zimna_stena\";\n    }\n    //tele/sonoffdual/SENSOR = {\"Time\":\"2022-12-24T22:58:14\",\"DS18B20\":{\"Id\":\"0213167D38AA\",\"Temperature\":19.9},\"TempUnit\":\"C\"}\n}\n\nelse if ( msg.topic == \"node/climate-monitor:0/thermometer/0:0/temperature\" ) {\n    if (msg.payload != err){\n     global.set('Zimna_stena', msg.payload);\n      msg.topic = \"Zimna_stena\";\n    }\n    //Teplotný senzor je v skatulke hardwario \n }\n\nelse if ( msg.topic == \"node/1wire-thermometer:0/thermometer/f401145b8d143e28/temperature\" ) {\n    if (msg.payload != err){\n     global.set('Konvektor_1', msg.payload);\n     msg.topic = \"Konvektor1\";\n    }\n}\n\nelse if ( msg.topic == \"node/1wire-thermometer:0/thermometer/8f02131ab447aa28/temperature\" ) {\n    if (msg.payload != err){\n     global.set('Konvektor_2', msg.payload);\n     msg.topic = \"Konvektor2\";\n    }\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 540,
+        "y": 720,
+        "wires": [
+            [
+                "55973c96.49b754",
+                "7e62b91a.cfc79",
+                "87055776.2219b8",
+                "8b2cad71.1ba4b8"
+            ]
+        ]
+    },
+    {
+        "id": "9ebd6dc0.0c798",
+        "type": "comment",
+        "z": "93bb1b11.b35458",
+        "name": "Teplota konvektora v podlahe",
+        "info": "\ntele/sonoffTH/STATE = {\"Time\":\"2021-07-06T08:02:38\",\"Uptime\":\"0T10:15:12\",\"UptimeSec\":36912,\"Heap\":27.0,\"SleepMode\":\"Dynamic\",\"Sleep\":50,\"LoadAvg\":19,\"MqttCount\":4,\"POWER\":\"OFF\",\"Wifi\":{\"AP\":1,\"SSId\":\"WiFi11G\",\"BSSId\":\"58:6D:8F:63:10:D1\",\"Channel\":11,\"RSSI\":60,\"Signal\":-70,\"LinkCount\":2,\"Downtime\":\"0T00:00:04\"}}\n\ntele/sonoffTH/SENSOR = {\"Time\":\"2021-07-06T08:02:38\",\"DS18B20-1\":{\"Id\":\"01145B8D143E\",\"Temperature\":34.7},\"DS18B20-2\":{\"Id\":\"02131AB447AA\",\"Temperature\":34.6},\"TempUnit\":\"C\"}\n\n\n\n stat/sonoffdual/STATUS = {\"Status\":{\"Module\":5,\"DeviceName\":\"Tasmota\",\"FriendlyName\":[\"Tasmota\",\"Tasmota2\"],\"Topic\":\"sonoffdual\",\"ButtonTopic\":\"0\",\"Power\":0,\"PowerOnState\":3,\"LedState\":1,\"LedMask\":\"FFFF\",\"SaveData\":1,\"SaveState\":1,\"SwitchTopic\":\"0\",\"SwitchMode\":[0,0,0,0,0,0,0,0],\"ButtonRetain\":0,\"SwitchRetain\":0,\"SensorRetain\":0,\"PowerRetain\":0,\"InfoRetain\":0,\"StateRetain\":0,\"StatusRetain\":0}}\n\ntele/sonoffdual/SENSOR = {\"Time\":\"2022-12-24T22:58:14\",\"DS18B20\":{\"Id\":\"0213167D38AA\",\"Temperature\":19.9},\"TempUnit\":\"C\"}\n\nPridal som novýé snímanie teploty nakoľko TH prestalo snímať teplotu na dlhých kábloch ktoré sú v podlahe.\nnode/1wire-thermometer:0/thermometer/8f02131ab447aa28/temperature \n36.88\nnode/1wire-thermometer:0/thermometer/f401145b8d143e28/temperature \n36.12\n\ntoto je preposielané z nového portu na raspi2 ",
+        "x": 540,
+        "y": 600,
+        "wires": []
+    },
+    {
+        "id": "4ca005aa.7f56ac",
+        "type": "comment",
+        "z": "93bb1b11.b35458",
+        "name": "archiv poznamky ",
+        "info": "pôvodný sonoff_th \n\nPristup k teplote cez mqqt: \ntest/switch/sonoth/temperature/#\n\nfunkcia na zopntie=1/vypnutie=0 rele_0 \nmsg.payload=\"0\";\nmsg.topic=\"test/switch/sonoth/relay/0/set\"\nreturn msg;",
+        "x": 380,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "37fe9770.aca79",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffTH  teplota?",
+        "func": "msg.payload=8;\nmsg.topic=\"cmnd/sonoffTH/STATUS\"\nreturn msg;\n\n\n/*\nStatus\n  = show abbreviated status information\n0 = show all status information (1 - 11)\n1 = show device parameters information\n2 = show firmware information\n3 = show logging and telemetry information\n4 = show memory information\n5 = show network information\n6 = show MQTT information\n7 = show time information\n8 = show connected sensor information\n9 = show power thresholds (only on modules with power monitoring)\n10 = same as Status 8 (retained for backwards compatibility)\n11 = show information equal to TelePeriod state message\n12 = in case of crash to dump the call stack saved in RT memory\n\nStatus0\n0 = show all status information in a single line\n*/",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 450,
+        "y": 1100,
+        "wires": [
+            [
+                "3aeab05f.0ae808"
+            ]
+        ]
+    },
+    {
+        "id": "c705a2b3.b56c4",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffTH_Teplota?",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonoffTH/relay/0/set",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 1100,
+        "wires": [
+            [
+                "37fe9770.aca79"
+            ]
+        ]
+    },
+    {
+        "id": "55973c96.49b754",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Uloz teplotu konvektora1",
+        "func": "//Uloz teplotu konvektora1\nvar teplota = global.get('Konvektor_1');\nvar msg1 = { payload: msg.payload.length };\nmsg1.payload  =  [{ measurement: \"home\", \n                    fields: { value: teplota}, \n                    tags: { location: \"Konvektor1\"} } ];\n\nreturn msg1;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 850,
+        "y": 580,
+        "wires": [
+            [
+                "c1b1d2d0.6198b8"
+            ]
+        ]
+    },
+    {
+        "id": "54827841.ac9518",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Uloz teplotu konvektora2",
+        "func": "//Uloz teplotu konvektora2\nvar teplota = global.get('Konvektor_2');\nvar msg1 = { payload: msg.payload.length };\nmsg1.payload  =  [{ measurement: \"home\", \n                    fields: { value: teplota}, \n                    tags: { location: \"Konvektor2\"} } ];\n\nreturn msg1;",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1030,
+        "y": 660,
+        "wires": [
+            [
+                "c1b1d2d0.6198b8"
+            ]
+        ]
+    },
+    {
+        "id": "c1b1d2d0.6198b8",
+        "type": "link out",
+        "z": "93bb1b11.b35458",
+        "name": "",
+        "links": [
+            "1618eede.4a4a99"
+        ],
+        "x": 1315,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "f1837412.098ab8",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "chladenie",
+        "repeat": "",
+        "crontab": "*/5 5-20 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 160,
+        "wires": [
+            [
+                "8434c9e7.baf1e8",
+                "5c39c496.12ac04"
+            ]
+        ]
+    },
+    {
+        "id": "9970e8e1.55546",
+        "type": "debug",
+        "z": "93bb1b11.b35458",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 1250,
+        "y": 1740,
+        "wires": []
+    },
+    {
+        "id": "f96c4027.81e48",
+        "type": "mqtt in",
+        "z": "93bb1b11.b35458",
+        "name": "",
+        "topic": "test/#",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "38a53c38.fdd9a4",
+        "inputs": 0,
+        "x": 70,
+        "y": 1740,
+        "wires": [
+            [
+                "9970e8e1.55546"
+            ]
+        ]
+    },
+    {
+        "id": "df29550a.2fccb",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "STOP",
+        "repeat": "",
+        "crontab": "*/5 21-22 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "false",
+        "payloadType": "bool",
+        "x": 300,
+        "y": 220,
+        "wires": [
+            [
+                "cc37d1d.bea18b"
+            ]
+        ]
+    },
+    {
+        "id": "5635d9a0.d677",
+        "type": "debug",
+        "z": "93bb1b11.b35458",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 520,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "ceac3bc7.976ce8",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 80,
+        "y": 220,
+        "wires": [
+            [
+                "5c39c496.12ac04"
+            ]
+        ]
+    },
+    {
+        "id": "dc2a6eb5.0d77d8",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoDual_ Zapni_polievanie",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonodua/relay/0",
+        "payload": "",
+        "payloadType": "date",
+        "x": 740,
+        "y": 80,
+        "wires": [
+            [
+                "cf613c67.3c561"
+            ]
+        ]
+    },
+    {
+        "id": "bbdafd05.703d7",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoDual_Vypni_obe",
+        "repeat": "",
+        "crontab": "*/5 7-8 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonodua/relay/0",
+        "payload": "",
+        "payloadType": "date",
+        "x": 800,
+        "y": 280,
+        "wires": [
+            [
+                "1d100cef.05f9cb"
+            ]
+        ]
+    },
+    {
+        "id": "b9571775.5335e8",
+        "type": "comment",
+        "z": "93bb1b11.b35458",
+        "name": "polievanie plot sused",
+        "info": "Tymto zapinam polievanie dole pri plote. Keď nastavim opakovanie rano o 6:00-7:00",
+        "x": 760,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "290be803.cb3468",
+        "type": "mqtt in",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffDallas:T1",
+        "topic": "tele/sonoffDallas/SENSOR/#",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "38a53c38.fdd9a4",
+        "inputs": 0,
+        "x": 120,
+        "y": 780,
+        "wires": [
+            [
+                "8127f079.ff38e"
+            ]
+        ]
+    },
+    {
+        "id": "71a841a3.457248",
+        "type": "mqtt in",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffDallas_status  ",
+        "topic": "stat/sonoffDallas/STATUS8/#",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "38a53c38.fdd9a4",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 130,
+        "y": 660,
+        "wires": [
+            [
+                "8127f079.ff38e"
+            ]
+        ]
+    },
+    {
+        "id": "2253dd20.dae91a",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "Uloz teplotu Zimnej zahrady stena",
+        "func": "//Uloz teplotu konvektora2\nvar teplota = global.get('Zimna_stena');\nvar msg1 = { payload: msg.payload.length };\nmsg1.payload  =  [{ measurement: \"home\", \n                    fields: { value: teplota}, \n                    tags: { location: \"Zimna_stena\"} } ];\n\nreturn msg1;\n\n// global.set('Zimna_stena', msg.payload[\"DS18B20\"].Temperature);\n//      msg.topic = \"Zimna_stena\";",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 1040,
+        "y": 720,
+        "wires": [
+            [
+                "c1b1d2d0.6198b8"
+            ]
+        ]
+    },
+    {
+        "id": "7e62b91a.cfc79",
+        "type": "delay",
+        "z": "93bb1b11.b35458",
+        "name": "30 millis.",
+        "pauseType": "delay",
+        "timeout": "30",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "outputs": 1,
+        "x": 780,
+        "y": 660,
+        "wires": [
+            [
+                "54827841.ac9518"
+            ]
+        ]
+    },
+    {
+        "id": "87055776.2219b8",
+        "type": "delay",
+        "z": "93bb1b11.b35458",
+        "name": "35milis.",
+        "pauseType": "delay",
+        "timeout": "35",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "outputs": 1,
+        "x": 780,
+        "y": 720,
+        "wires": [
+            [
+                "2253dd20.dae91a"
+            ]
+        ]
+    },
+    {
+        "id": "7fb57464.f4df2c",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "sonoth ON",
+        "func": "msg.payload=1;\nmsg.topic=\"cmnd/sonoffDallas/POWER\"\nreturn msg;\n\n//stat/sonoffTH/RESULT = {\"POWER\":\"OFF\"}\n//stat/sonoffTH/POWER = OFF\n\n\n\n// pôvodne :\n/*\nmsg.payload=\"1\";\nmsg.topic=\"test/switch/sonoth/relay/0/set\"\nreturn msg;\n*/\n",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 1580,
+        "wires": [
+            [
+                "3aeab05f.0ae808"
+            ]
+        ]
+    },
+    {
+        "id": "ea5758ea.f49c68",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffDallas_ Zapni",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonoffDallas/relay/0/set",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 1580,
+        "wires": [
+            [
+                "7fb57464.f4df2c"
+            ]
+        ]
+    },
+    {
+        "id": "3a61a54c.6a26fa",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "sonoth OFF",
+        "func": "msg.payload=0;\nmsg.topic=\"cmnd/sonoffDallas/POWER\"\nreturn msg;\n\n\n\n// pôvodne\n/*\nmsg.payload=\"0\";\nmsg.topic=\"test/switch/sonoth/relay/0/set\"\nreturn msg;\n*/",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 470,
+        "y": 1620,
+        "wires": [
+            [
+                "3aeab05f.0ae808"
+            ]
+        ]
+    },
+    {
+        "id": "c269422b.f5fe38",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffDallas_Vypni",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonoffDallas/relay/0/set",
+        "payload": "",
+        "payloadType": "date",
+        "x": 190,
+        "y": 1620,
+        "wires": [
+            [
+                "3a61a54c.6a26fa"
+            ]
+        ]
+    },
+    {
+        "id": "7dc28e17.9dad9",
+        "type": "function",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffTH  teplota?",
+        "func": "msg.payload=8;\nmsg.topic=\"cmnd/sonoffDallas/STATUS\"\nreturn msg;\n\n\n/*\nStatus\n  = show abbreviated status information\n0 = show all status information (1 - 11)\n1 = show device parameters information\n2 = show firmware information\n3 = show logging and telemetry information\n4 = show memory information\n5 = show network information\n6 = show MQTT information\n7 = show time information\n8 = show connected sensor information\n9 = show power thresholds (only on modules with power monitoring)\n10 = same as Status 8 (retained for backwards compatibility)\n11 = show information equal to TelePeriod state message\n12 = in case of crash to dump the call stack saved in RT memory\n\nStatus0\n0 = show all status information in a single line\n*/",
+        "outputs": 1,
+        "noerr": 0,
+        "x": 450,
+        "y": 1140,
+        "wires": [
+            [
+                "3aeab05f.0ae808"
+            ]
+        ]
+    },
+    {
+        "id": "b068487c.201c38",
+        "type": "inject",
+        "z": "93bb1b11.b35458",
+        "name": "sonoffDallas_Teplota?",
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "test/switch/sonoffDallas/relay/0/set",
+        "payload": "",
+        "payloadType": "date",
+        "x": 180,
+        "y": 1140,
+        "wires": [
+            [
+                "7dc28e17.9dad9"
+            ]
+        ]
+    },
+    {
+        "id": "e6dde737.dc7358",
+        "type": "mqtt in",
+        "z": "93bb1b11.b35458",
+        "name": "",
+        "topic": "node/1wire-thermometer:0/thermometer/#",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "38a53c38.fdd9a4",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 160,
+        "y": 620,
+        "wires": [
+            [
+                "8127f079.ff38e"
+            ]
+        ]
+    },
+    {
+        "id": "8b2cad71.1ba4b8",
+        "type": "debug",
+        "z": "93bb1b11.b35458",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 1250,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "dd2dd7ed.99ed08",
+        "type": "mqtt in",
+        "z": "93bb1b11.b35458",
+        "name": "",
+        "topic": "node/climate-monitor:0/thermometer/0:0/temperature",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "cdbe4a0b.48aed",
+        "nl": false,
+        "rap": false,
+        "inputs": 0,
+        "x": 190,
+        "y": 580,
+        "wires": [
+            [
+                "8127f079.ff38e"
+            ]
+        ]
+    },
+    {
+        "id": "38a53c38.fdd9a4",
+        "type": "mqtt-broker",
+        "name": "pokus2",
+        "broker": "192.168.1.10",
+        "port": "1883",
+        "clientid": "pokus2",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "388d2e1a.fa6fb2",
+        "type": "ui_group",
+        "name": "   Ovládanie chladenia",
+        "tab": "81a602f6.85841",
+        "order": 1,
+        "disp": false,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "cdbe4a0b.48aed",
+        "type": "mqtt-broker",
+        "name": "Raspi2",
+        "broker": "192.168.1.105",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "compatmode": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "81a602f6.85841",
+        "type": "ui_tab",
+        "name": "Chladenie",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]
